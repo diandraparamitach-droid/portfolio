@@ -1035,4 +1035,30 @@ function esc(s) {
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#039;');
 }
+
+  <!-- PROJECT DETAIL DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div>
+      <div id="d-badge" class="drawer-cat-badge badge-mkt">📢 Marketing</div>
+      <div id="d-title" class="drawer-title">Judul Proyek</div>
+      <div id="d-year" class="drawer-year"></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+
+  <div class="drawer-body" id="drawer-body"></div>
+
+  <div class="drawer-footer">
+    <a id="d-view-btn" class="btn btn-primary" target="_blank" style="display:none">
+      🔗 Lihat Proyek
+    </a>
+    <button class="btn btn-ghost edit-only" onclick="editFromDrawer()">✏️ Edit</button>
+    <button class="btn btn-ghost edit-only" onclick="deleteFromDrawer()">🗑 Hapus</button>
+  </div>
+</div>
   </script>
+
+  
