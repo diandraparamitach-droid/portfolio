@@ -664,10 +664,7 @@ function buildCard(item) {
   div.className = `card ${cat}`;
   div.dataset.id = item.id;
   const tags = Array.isArray(item.tags) ? item.tags : [];
-  div.onclick = (e) => {
-    if (e.target.closest('.edit-only') || e.target.closest('a')) return;
-    openDrawer(item.id);
-  };
+
   div.innerHTML = `
     <div class="card-thumb ${THUMB_CLASS[cat]}"><span class="card-thumb-icon">${item.icon||'📁'}</span></div>
     <div class="card-body">
@@ -679,14 +676,25 @@ function buildCard(item) {
     <div class="card-footer">
       <span>${esc(String(item.year||''))}</span>
       <div class="card-actions">
-        ${item.url ? `<a class="btn-sm" href="${esc(item.url)}" target="_blank" rel="noopener">🔗 View</a>` : ''}
-        <button class="btn-sm edit-only" onclick="event.stopPropagation();openEditModal('${item.id}')">✏️ Edit</button>
-        <button class="btn-sm btn-sm-del edit-only" onclick="event.stopPropagation();confirmDelete('${item.id}')">🗑</button>
+        ${item.url ? `<a class="btn-sm view-link" href="${esc(item.url)}" target="_blank" rel="noopener">🔗 View</a>` : ''}
+        <button class="btn-sm edit-only btn-edit-card">✏️ Edit</button>
+        <button class="btn-sm btn-sm-del edit-only btn-del-card">🗑 Hapus</button>
       </div>
     </div>`;
+
+  // Attach events AFTER innerHTML so elements exist in DOM
+  const editBtn = div.querySelector('.btn-edit-card');
+  const delBtn = div.querySelector('.btn-del-card');
+  if (editBtn) editBtn.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(item.id); });
+  if (delBtn)  delBtn.addEventListener('click',  (e) => { e.stopPropagation(); confirmDelete(item.id); });
+
+  div.addEventListener('click', (e) => {
+    if (e.target.closest('.edit-only') || e.target.closest('.view-link')) return;
+    openDrawer(item.id);
+  });
+
   return div;
 }
-
 function emptyState() {
   const div = document.createElement('div');
   div.className = 'empty-state';
