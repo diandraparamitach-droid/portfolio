@@ -2064,7 +2064,6 @@ function deleteFromDrawer() {
   setTimeout(() => confirmDelete(drawerProjectId), 200);
 }
 
-// Close drawer on ESC
 function esc(s) {
   return String(s)
     .replace(/&/g,'&amp;')
@@ -2074,7 +2073,13 @@ function esc(s) {
     .replace(/'/g,'&#039;');
 }
 
-  <!-- PROJECT DETAIL DRAWER -->
+// ✅ Close drawer pakai ESC (bonus)
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDrawer();
+});
+</script>
+
+<!-- ✅ PROJECT DETAIL DRAWER (WAJIB DI LUAR SCRIPT) -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 
 <div class="drawer" id="drawer">
@@ -2097,7 +2102,6 @@ function esc(s) {
     <button class="btn btn-ghost edit-only" onclick="deleteFromDrawer()">🗑 Hapus</button>
   </div>
 </div>
-  </script>
+
 </body>
 </html>
-  
