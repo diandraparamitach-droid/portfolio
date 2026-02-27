@@ -122,12 +122,15 @@ body.edit-mode .card-add.edit-only { display: flex !important; }
 .card.mkt:hover { box-shadow: 6px 6px 0 var(--mkt-mid); border-color: var(--mkt); }
 .card.dsn:hover { box-shadow: 6px 6px 0 var(--dsn-mid); border-color: var(--dsn); }
 .card.it:hover  { box-shadow: 6px 6px 0 var(--it-mid);  border-color: var(--it); }
-.card-thumb { width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+.card-thumb { width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; position: relative; overflow: hidden; }
+.card-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.card:hover .card-thumb img { transform: scale(1.06); }
 .thumb-mkt { background: linear-gradient(135deg, var(--mkt-light), var(--mkt-mid)); }
 .thumb-dsn { background: linear-gradient(135deg, var(--dsn-light), var(--dsn-mid)); }
 .thumb-it  { background: linear-gradient(135deg, var(--it-light),  var(--it-mid)); }
-.card-thumb-icon { transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); display: inline-block; }
+.card-thumb-icon { transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); display: inline-block; position: relative; z-index: 1; }
 .card:hover .card-thumb-icon { transform: scale(1.2) rotate(-8deg); }
+.card-thumb.has-img .card-thumb-icon { display: none; }
 .card-body { padding: 1.25rem; }
 .card-cat { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
 .cat-mkt { color: var(--mkt); } .cat-dsn { color: var(--dsn); } .cat-it { color: var(--it); }
@@ -247,25 +250,29 @@ footer { position: relative; z-index: 1; padding: 1.5rem 2rem; border-top: 2px d
   .section-wrap-mkt,.section-wrap-dsn,.section-wrap-it{margin:0 0 1.5rem;border-radius:20px}
 }
 
-/* ── DRAWER ── */
+/* ── DETAIL MODAL (centered) ── */
 .drawer-overlay {
-  position: fixed; inset: 0; background: rgba(26,18,9,0.45);
-  backdrop-filter: blur(4px); z-index: 500;
-  opacity: 0; pointer-events: none; transition: opacity 0.35s;
+  position: fixed; inset: 0; background: rgba(26,18,9,0.5);
+  backdrop-filter: blur(6px); z-index: 500;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
 }
 .drawer-overlay.open { opacity: 1; pointer-events: all; }
 
 .drawer {
-  position: fixed; top: 0; right: 0; bottom: 0;
-  width: min(560px, 100vw);
+  position: relative;
+  width: 100%; max-width: 640px; max-height: 90vh;
   background: var(--bg); z-index: 501;
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(.32,.72,0,1);
+  border-radius: 28px;
+  border: 2px solid var(--border);
+  box-shadow: 8px 8px 0 var(--border);
+  transform: scale(0.92) translateY(16px);
+  transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
   display: flex; flex-direction: column;
   overflow: hidden;
-  box-shadow: -8px 0 48px rgba(0,0,0,0.12);
 }
-.drawer.open { transform: translateX(0); }
+.drawer-overlay.open .drawer { transform: scale(1) translateY(0); }
 
 .drawer-header {
   padding: 1.5rem 1.75rem 1.25rem;
@@ -553,30 +560,12 @@ body.edit-mode .drawer-footer .edit-only { display: inline-flex !important; }
     <span class="contact-confetti cc3">🌟</span><span class="contact-confetti cc4">🎊</span>
     <h2 class="contact-title">Yuk,<br>kita <span style="color:var(--mkt)">ngobrol!</span> 💬</h2>
     <p class="contact-sub">Punya proyek seru atau mau kolaborasi? Aku siap! 🚀</p>
-   <div class="contact-btns">
-  <a class="cta-btn cta-email" 
-     href="mailto:diandraparamitach@gmail.com">
-     📧 Email Aku
-  </a>
-
-  <a class="cta-btn cta-social" 
-     href="https://www.linkedin.com/in/diandra-paramita-chairunisa-3b84162a8/" 
-     target="_blank">
-     💼 LinkedIn
-  </a>
-
-  <a class="cta-btn cta-social" 
-     href="https://instagram.com/deeandthera" 
-     target="_blank">
-     📸 Instagram
-  </a>
-
-  <a class="cta-btn cta-social" 
-     href="https://github.com/diandraparamitach-droid" 
-     target="_blank">
-     🐙 GitHub
-  </a>
-</div>
+    <div class="contact-btns">
+      <a class="cta-btn cta-email" href="/cdn-cgi/l/email-protection#3c54595050537c59445d514c5059125f5351">📧 Email Aku</a>
+      <a class="cta-btn cta-social" href="#" target="_blank">💼 LinkedIn</a>
+      <a class="cta-btn cta-social" href="#" target="_blank">📸 Instagram</a>
+      <a class="cta-btn cta-social" href="#" target="_blank">🐙 GitHub</a>
+    </div>
   </div>
 </section>
 
@@ -671,8 +660,12 @@ function buildCard(item) {
   div.className = `card ${cat}`;
   div.dataset.id = item.id;
 
+  const hasImg = !!item.image_url;
   div.innerHTML = `
-    <div class="card-thumb ${THUMB_CLASS[cat]}"><span class="card-thumb-icon">${item.icon||'📁'}</span></div>
+    <div class="card-thumb ${THUMB_CLASS[cat]}${hasImg ? ' has-img' : ''}">
+      ${hasImg ? `<img src="${esc(item.image_url)}" alt="${esc(item.title)}" loading="lazy">` : ''}
+      <span class="card-thumb-icon">${item.icon||'📁'}</span>
+    </div>
     <div class="card-body">
       <div class="card-cat ${CAT_CLASS[cat]}">${CATS[cat]}</div>
       <div class="card-title">${esc(item.title)}</div>
