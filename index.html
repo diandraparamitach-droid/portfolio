@@ -1044,5 +1044,25 @@ window.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closePwModal(); closeDrawer(); }
 });
 </script>
+
+<!-- DETAIL MODAL -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-cat-badge" id="d-badge"></div>
+        <div class="drawer-title" id="d-title"></div>
+        <div class="drawer-year" id="d-year"></div>
+      </div>
+      <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+    <div class="drawer-footer">
+      <a class="btn btn-primary" id="d-view-btn" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none">🔗 Lihat Proyek</a>
+      <button class="btn btn-ghost edit-only" onclick="editFromDrawer()">✏️ Edit</button>
+      <button class="btn btn-ghost edit-only" style="color:#dc2626;border-color:#fca5a5" onclick="deleteFromDrawer()">🗑 Hapus</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
